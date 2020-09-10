@@ -21,6 +21,8 @@ function init(){
 	// hide 'other' job role field. It should only be revealed if
 	// a user selects 'other' from the job role dropdown
 	otherJobField.style.display = "none";
+
+	addDefaultColorMessage();
 }
 
 
@@ -42,31 +44,13 @@ themeSelect.addEventListener("change", (e)=> {
 
 	function toggleColorFieldText() {
 		if(e.target.value === "Select Theme") {
-
-			hideOptionsFromSelect(heartColors.concat(punColors));
-			let defaultMessage = `<option id="defaultMessage">Please Select a T-Shirt Theme</option>`
-			colorSelect.insertAdjacentHTML('afterbegin', defaultMessage);
-			colorSelect.firstElementChild.selected="selected";
+			addDefaultColorMessage();
 		}else if(e.target.value === "js puns") {
-			// Remove default message if it exists
-			let defaultMessage = document.querySelector("#defaultMessage");
-			defaultMessage ? defaultMessage.remove() :'';
-			// Hide 'heart' theme options
-			hideOptionsFromSelect(heartColors);
-			// Unhide 'puns' theme options
-			unHideOptionsFromSelect(punColors);
-			colorSelect.firstElementChild.selected="selected";
-
+			removeDefaultColorMessage();
+			updateOptionsToFitTheme(punColors);
 		}else if(e.target.value === "heart js") {
-			// Remove default message if it exists
-			let defaultMessage = document.querySelector("#defaultMessage");
-			defaultMessage ? defaultMessage.remove() :'';
-			// hide 'puns' theme options
-			hideOptionsFromSelect(punColors);
-			// unhide 'heart' theme options
-			unHideOptionsFromSelect(heartColors);
-
-			//colorSelect.firstElementChild.selected="selected";
+			removeDefaultColorMessage();
+			updateOptionsToFitTheme(heartColors);
 		}
 	}
 });
@@ -75,27 +59,55 @@ themeSelect.addEventListener("change", (e)=> {
 /**
 * 
 */
-function hideOptionsFromSelect(colors) {
-	colors.forEach(color => {
-		let colorOptionElement = document.querySelector(`option[value=${color}]`);
-		colorOptionElement.style.display = 'none';
-		colorOptionElement.disabled = true;
-	});
+function addDefaultColorMessage() {
+	// this hides all other options
+	updateOptionsToFitTheme([]);
+	
+	let defaultMessage = `<option id="defaultMessage">Please Select a T-Shirt Theme</option>`
+	colorSelect.insertAdjacentHTML('afterbegin', defaultMessage);
+	colorSelect.firstElementChild.selected="selected";
+}
+
+/**
+* Removes default message if it exists
+*/
+function removeDefaultColorMessage(){
+	let defaultMessage = document.querySelector("#defaultMessage");
+	defaultMessage ? defaultMessage.remove() :'';
 }
 
 /**
 * 
 */
-function unHideOptionsFromSelect(colors) {
-	colors.forEach((color,i) => {
-		let colorOptionElement = document.querySelector(`option[value=${color}]`);
-		colorOptionElement.style.display = 'block';
-		colorOptionElement.disabled = false;
-		if(i === 0){
-			colorOptionElement.selected="selected";
-		}
-	});
+function updateOptionsToFitTheme(colors) {
+	hideAllColors();
+	unhideChosenColors();
+
+
+	function hideAllColors() {
+		let allColors = punColors.concat(heartColors);
+		allColors.forEach(color => {
+			let colorOptionElement = document.querySelector(`option[value=${color}]`);
+			colorOptionElement.style.display = 'none';
+			colorOptionElement.disabled = true;
+		});
+	}
+
+	function unhideChosenColors(){
+		colors.forEach((color,i) => {
+			let colorOptionElement = document.querySelector(`option[value=${color}]`);
+			colorOptionElement.style.display = 'block';
+			colorOptionElement.disabled = false;
+
+			// make the top visible element selected
+			if(i === 0){
+				colorOptionElement.selected="selected";
+			}
+		});
+	}
 }
+
+
 
 
 
