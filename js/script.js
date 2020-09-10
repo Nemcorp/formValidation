@@ -1,7 +1,13 @@
-const otherJobField = document.querySelector("#other-title"),
-	  jobRoleSelect = document.querySelector("#title"),
+// dom elements for job role
+const otherJobField = document.querySelector("#other-title");
+
+// Dom elements for T-Shirt Info
+const jobRoleSelect = document.querySelector("#title"),
 	  themeSelect 	= document.querySelector("#design"),
 	  colorSelect 	= document.querySelector("#color");
+
+// Dom elements for Activity Registration
+const registrationField = document.querySelector(".activities");
 
 const punColors 	= ['cornflowerblue', 'darkslategrey', 'gold'],
 	  heartColors 	= ['tomato','steelblue','dimgrey'];
@@ -54,7 +60,6 @@ themeSelect.addEventListener("change", (e)=> {
 		}
 	}
 });
-
 
 /**
 * 
@@ -109,6 +114,41 @@ function updateOptionsToFitTheme(colors) {
 
 
 
+registrationField.addEventListener("click", (e)=> {
+	let dayAndTime = e.target.getAttribute('data-day-and-time') 
+	let day = parseDay(dayAndTime);
+	let startTime = parseStartTime(dayAndTime);
+	let endTime = parseEndTime(dayAndTime);
+	console.log(day);
+
+	// for each event, check if there is a day conflict
+	let events = registrationField.querySelectorAll("label");
+	// Start at one because the first element, main conference, does not have a date and time
+	for(let i = 1; i < events.length; i++){
+		let event = events[i].firstElementChild;
+		let eventDay = parseDay(event.getAttribute('data-day-and-time'));
+		if(day === eventDay){
+			// if there is, check for a time conflict
+			let eventDayAndTime = event.getAttribute('data-day-and-time');
+			let eventStartTime = parseStartTime(eventDayAndTime);
+			let eventEndTime = parseEndTime(eventDayAndTime);
+			if((startTime >= eventStartTime && startTime <= eventEndTime) ||
+				(endTime >= eventStartTime && endTime <= eventEndTime)){
+				console.log("BREAC H " + event.name);
+				// if there is, disable checkbox and grey out the option
+				events[i].style.color = "grey";
+			}
+		} 
+	}
+	
+
+});
+
+
+// function eventStartsDuring(){
+// 	return (startTime > eventStartTime && startTime < eventEndTime) 
+// }
+
 
 function parseDay(dayAndTime) {
 	return dayAndTime.match(/^\w+/i)[0];
@@ -117,7 +157,7 @@ function parseDay(dayAndTime) {
 function parseStartTime(dayAndTime) {
 	let timeString = dayAndTime.match(/ \d+[ap]m+/i)[0];
 	let time = parseInt(timeString.match(/\d+/));
-	if(timeString.includes('p')){
+	if(timeString.includes('p') && time != 12){
 		time = time+12;
 	}
 	return time;
@@ -126,7 +166,7 @@ function parseStartTime(dayAndTime) {
 function parseEndTime(dayAndTime) {
 	let timeString = dayAndTime.match(/\-\d+[ap]m+/i)[0];
 	let time = parseInt(timeString.match(/\d+/));
-	if(timeString.includes('p')){
+	if(timeString.includes('p') && time != 12){
 		time = time+12;
 	}
 	return time;
