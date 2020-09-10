@@ -1,5 +1,6 @@
 const otherJobField = document.querySelector("#other-title"),
-	  jobRoleSelect = document.querySelector("#title");
+	  jobRoleSelect = document.querySelector("#title"),
+	  themeSelect 	= document.querySelector("#design");
 
 
 
@@ -27,6 +28,10 @@ jobRoleSelect.addEventListener("change", (e)=> {
 		otherJobField.style.display = "none";
 	}
 });
+
+
+
+
 
 
 
