@@ -111,23 +111,25 @@ function updateOptionsToFitTheme(colors) {
 
 
 function parseDay(dayAndTime) {
-	return dayAndTime.match(/\w+/i);
+	return dayAndTime.match(/^\w+/i)[0];
 }
 
 function parseStartTime(dayAndTime) {
-	let timeString = dayAndTime.match(/ \d+[ap]m+/i);
-	let time = timeString.match(/\d+/);
+	let timeString = dayAndTime.match(/ \d+[ap]m+/i)[0];
+	let time = parseInt(timeString.match(/\d+/));
 	if(timeString.includes('p')){
 		time = time+12;
 	}
+	return time;
 }
 
 function parseEndTime(dayAndTime) {
-	let timeString = dayAndTime.match(/ \d+[ap]m+/i);
-	let time = timeString.match(/\d+/);
+	let timeString = dayAndTime.match(/\-\d+[ap]m+/i)[0];
+	let time = parseInt(timeString.match(/\d+/));
 	if(timeString.includes('p')){
 		time = time+12;
 	}
+	return time;
 }
 
 
