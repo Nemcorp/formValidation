@@ -115,63 +115,97 @@ function updateOptionsToFitTheme(colors) {
 
 
 registrationField.addEventListener("click", (e)=> {
-	let dayAndTime = e.target.getAttribute('data-day-and-time') 
-	let day = parseDay(dayAndTime);
-	let startTime = parseStartTime(dayAndTime);
-	let endTime = parseEndTime(dayAndTime);
-	console.log(day);
-
 	// for each event, check if there is a day conflict
 	let events = registrationField.querySelectorAll("label");
 	// Start at one because the first element, main conference, does not have a date and time
 	for(let i = 1; i < events.length; i++){
-		let event = events[i].firstElementChild;
-		let eventDay = parseDay(event.getAttribute('data-day-and-time'));
-		if(day === eventDay && event !== e.target){
-			// if there is, check for a time conflict
-			let eventDayAndTime = event.getAttribute('data-day-and-time');
-			let eventStartTime = parseStartTime(eventDayAndTime);
-			let eventEndTime = parseEndTime(eventDayAndTime);
-			if((startTime >= eventStartTime && startTime <= eventEndTime) ||
-				(endTime >= eventStartTime && endTime <= eventEndTime)){
-				console.log("BREAC H " + event.name);
-				// if there is, disable checkbox and grey out the option
-				if(e.target.checked){
-					events[i].style.color = "grey";
-					event.disabled = true;
-				}else {
-					events[i].style.color = "black";
-					event.disabled = false;
-				}
-			}
-		} 
+		if(eventConflict(e.target, events[i].firstElementChild)){
+			handleCheckboxDisabling(events[i]);
+		}
 	}
-	
+
+
+	/**
+	* 
+	*/
+	function eventConflict(event1, event2) {
+		let dayAndTime1 = event1.getAttribute('data-day-and-time'); 
+		let dayAndTime2 = event2.getAttribute('data-day-and-time'); 
+
+		return (dayConflict() && timeConflict() && event1 !== event2);
+
+		/**
+		* 
+		*/
+		function dayConflict() {
+			let day2 = parseDay(dayAndTime2);
+			let day1 = parseDay(dayAndTime1);
+			return (day1 === day2);
+		}
+
+		/**
+		* 
+		*/
+		function timeConflict(){
+			let startTime1 = parseStartTime(dayAndTime1),
+				endTime1 = parseEndTime(dayAndTime1);	
+			let startTime2 = parseStartTime(dayAndTime2),
+				endTime2 = parseEndTime(dayAndTime2);	
+
+			return (startTime1 >= startTime2 && startTime1 <= endTime2) ||
+				(endTime1 >= startTime2 && endTime1 <= endTime2);
+		}
+
+
+		/**
+		* 
+		*/
+		function parseDay(dayAndTime) {
+			return dayAndTime.match(/^\w+/i)[0];
+		}
+
+		/**
+		* 
+		*/
+		function parseStartTime(dayAndTime) {
+			let timeString = dayAndTime.match(/ \d+[ap]m+/i)[0];
+			let time = parseInt(timeString.match(/\d+/));
+			if(timeString.includes('p') && time != 12){
+				time = time+12;
+			}
+			return time;
+		}
+
+		/**
+		* 
+		*/
+		function parseEndTime(dayAndTime) {
+			let timeString = dayAndTime.match(/\-\d+[ap]m+/i)[0];
+			let time = parseInt(timeString.match(/\d+/));
+			if(timeString.includes('p') && time != 12){
+				time = time+12;
+			}
+			return time;
+		}
+	}
+
+	/**
+	* 
+	*/
+	function handleCheckboxDisabling(event) {
+		let eventCheckbox = event.firstElementChild;
+		if(e.target.checked){
+			event.style.color = "grey";
+			eventCheckbox.disabled = true;
+		}else {
+			event.style.color = "black";
+			eventCheckbox.disabled = false;
+		}
+	}
 
 });
 
 
-function parseDay(dayAndTime) {
-	return dayAndTime.match(/^\w+/i)[0];
-}
-
-function parseStartTime(dayAndTime) {
-	let timeString = dayAndTime.match(/ \d+[ap]m+/i)[0];
-	let time = parseInt(timeString.match(/\d+/));
-	if(timeString.includes('p') && time != 12){
-		time = time+12;
-	}
-	return time;
-}
-
-function parseEndTime(dayAndTime) {
-	let timeString = dayAndTime.match(/\-\d+[ap]m+/i)[0];
-	let time = parseInt(timeString.match(/\d+/));
-	if(timeString.includes('p') && time != 12){
-		time = time+12;
-	}
-	return time;
-}
 
 
 
