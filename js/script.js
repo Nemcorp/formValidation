@@ -127,7 +127,7 @@ registrationField.addEventListener("click", (e)=> {
 	for(let i = 1; i < events.length; i++){
 		let event = events[i].firstElementChild;
 		let eventDay = parseDay(event.getAttribute('data-day-and-time'));
-		if(day === eventDay){
+		if(day === eventDay && event !== e.target){
 			// if there is, check for a time conflict
 			let eventDayAndTime = event.getAttribute('data-day-and-time');
 			let eventStartTime = parseStartTime(eventDayAndTime);
@@ -136,18 +136,19 @@ registrationField.addEventListener("click", (e)=> {
 				(endTime >= eventStartTime && endTime <= eventEndTime)){
 				console.log("BREAC H " + event.name);
 				// if there is, disable checkbox and grey out the option
-				events[i].style.color = "grey";
+				if(e.target.checked){
+					events[i].style.color = "grey";
+					event.disabled = true;
+				}else {
+					events[i].style.color = "black";
+					event.disabled = false;
+				}
 			}
 		} 
 	}
 	
 
 });
-
-
-// function eventStartsDuring(){
-// 	return (startTime > eventStartTime && startTime < eventEndTime) 
-// }
 
 
 function parseDay(dayAndTime) {
