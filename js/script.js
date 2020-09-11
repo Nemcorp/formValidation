@@ -128,22 +128,42 @@ registrationField.addEventListener("click", (e)=> {
 
 	updateTotalCost();
 
+	/**
+	* 
+	*/
 	function updateTotalCost() {
-		let totalCost = 0;
-		// if a total cost element already exists
-		if(document.querySelector('#totalCost')){
-			let totalCostElement = document.querySelector('#totalCost');
-			totalCost = totalCostElement.innerHTML.match(/\d+/)[0];
-			totalCost = parseInt(totalCost, 10);
-			totalCostElement.remove();
+		if(!totalCostWrapperExists()){
+			addTotalCostWrapper();
 		}
 
-		let costToAdd = parseInt(e.target.getAttribute('data-cost'), 10);
-		if(!e.target.checked) { costToAdd *= -1;}
-		totalCost += costToAdd;
+		let totalCostElement = document.querySelector("#totalCost");
+		let totalCost = calculateNewTotalCost();
+		totalCostElement.innerHTML = totalCost;
 
-		let totalCostElement = `<span id="totalCost"> Total Cost: $${totalCost} </span> `;
-		registrationField.insertAdjacentHTML('beforeend', totalCostElement);
+
+
+		function totalCostWrapperExists() {
+			return document.querySelector('#totalCostWrapper');
+		}
+
+		function addTotalCostWrapper() {
+			let totalCostWrapper = 
+				`<span id="totalCostWrapper"> Total Cost: $
+					<span id="totalCost">0</span> 
+				</span> `;
+			registrationField.insertAdjacentHTML('beforeend', totalCostWrapper);
+		}
+
+		function calculateNewTotalCost() {
+			let previousCost = parseInt(totalCostElement.innerHTML, 10);
+			let costToAdd = parseInt(e.target.getAttribute('data-cost'), 10);
+			
+			// If the box is being unchecked, subtract cost instead of adding it
+			if(!e.target.checked) { costToAdd *= -1;}
+			
+			return previousCost + costToAdd;
+		}
+
 	}
 
 
