@@ -118,11 +118,35 @@ registrationField.addEventListener("click", (e)=> {
 	// for each event, check if there is a day conflict
 	let events = registrationField.querySelectorAll("label");
 	// Start at one because the first element, main conference, does not have a date and time
-	for(let i = 1; i < events.length; i++){
-		if(eventConflict(e.target, events[i].firstElementChild)){
-			handleCheckboxDisabling(events[i]);
+	if(e.target.name !== "all"){
+		for(let i = 1; i < events.length; i++){
+			if(eventConflict(e.target, events[i].firstElementChild) ){
+				handleCheckboxDisabling(events[i]);
+			}
 		}
 	}
+
+	updateTotalCost();
+
+	function updateTotalCost() {
+		let totalCost = 0;
+		// if a total cost element already exists
+		if(document.querySelector('#totalCost')){
+			let totalCostElement = document.querySelector('#totalCost');
+			totalCost = totalCostElement.innerHTML.match(/\d+/)[0];
+			totalCost = parseInt(totalCost, 10);
+			totalCostElement.remove();
+		}
+
+		let costToAdd = parseInt(e.target.getAttribute('data-cost'), 10);
+		if(!e.target.checked) { costToAdd *= -1;}
+		totalCost += costToAdd;
+
+		let totalCostElement = `<span id="totalCost"> Total Cost: $${totalCost} </span> `;
+		registrationField.insertAdjacentHTML('beforeend', totalCostElement);
+	}
+
+
 
 
 	/**
