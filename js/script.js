@@ -140,6 +140,8 @@ registrationField.addEventListener("click", (e)=> {
 		let totalCost = calculateNewTotalCost();
 		totalCostElement.innerHTML = totalCost;
 
+		if(totalCost <1 ) { removeTotalCostWrapper()};
+
 
 
 		function totalCostWrapperExists() {
@@ -152,6 +154,10 @@ registrationField.addEventListener("click", (e)=> {
 					<span id="totalCost">0</span> 
 				</span> `;
 			registrationField.insertAdjacentHTML('beforeend', totalCostWrapper);
+		}
+
+		function removeTotalCostWrapper() {
+			document.querySelector('#totalCostWrapper').remove();
 		}
 
 		function calculateNewTotalCost() {
