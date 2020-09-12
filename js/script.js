@@ -1,3 +1,5 @@
+const form 				= document.querySelector('form');
+
 // dom elements for job role
 const otherJobField 	= document.querySelector("#other-title");
 
@@ -40,6 +42,34 @@ function init(){
 
 
 /*********************EVENT LISTENERS********************/
+
+form.addEventListener("submit", ()=>{
+	validateForm();
+});
+
+const nameInput = document.querySelector('#name');
+nameInput.addEventListener("input", ()=> {
+	let regex = /.+/;
+	if(!regex.test(nameInput.value)){
+		applyValidationError(nameInput);
+	} else {
+		removeValidationError(nameInput);
+	}
+});
+
+function applyValidationError(input) {
+	input.classList.add("invalid");
+}
+
+function removeValidationError(input) {
+	input.classList.remove("invalid");
+}
+
+function validateForm() {
+	//checkValidity();
+}
+
+
 jobRoleSelect.addEventListener("change", (e)=> {
 	toggleOtherJobField();
 

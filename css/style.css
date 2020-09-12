@@ -127,6 +127,10 @@ option {
 	font-family: 'roboto', sans-serif;
 }
 
+.invalid {
+	border: 2px solid red;
+}
+
 /* ================================= 
   Page Styles
 ==================================== */
