@@ -34,6 +34,8 @@ function init(){
 	addDefaultColorMessage();
 
 	hideAllPaymentMethods();
+	showPaymentMethod("credit-card");
+	disableDefaultPaymentSelectMessage();
 }
 
 
@@ -265,17 +267,8 @@ paymentMethod.addEventListener('change', ()=> {
 
 	hideAllPaymentMethods();
 	showPaymentMethod(method);
-
-	
-	if(method == "credit-card"){
-
-	}else if(method == "paypal"){
-
-	}else if(method == "bitcoin") {
-
-	}
-
 });
+
 
 function showPaymentMethod(method) {
 	document.querySelector("#"+method).style.display = 'block';
@@ -292,7 +285,9 @@ function hideAllPaymentMethods() {
 	});
 }
 
-
+function disableDefaultPaymentSelectMessage() {
+	paymentMethod.querySelector("option").disabled = true;
+}
 
 
 
