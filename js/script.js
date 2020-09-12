@@ -1,13 +1,16 @@
 // dom elements for job role
-const otherJobField = document.querySelector("#other-title");
+const otherJobField 	= document.querySelector("#other-title");
 
 // Dom elements for T-Shirt Info
-const jobRoleSelect = document.querySelector("#title"),
-	  themeSelect 	= document.querySelector("#design"),
-	  colorSelect 	= document.querySelector("#color");
+const jobRoleSelect 	= document.querySelector("#title"),
+	  themeSelect 		= document.querySelector("#design"),
+	  colorSelect 		= document.querySelector("#color");
 
 // Dom elements for Activity Registration
 const registrationField = document.querySelector(".activities");
+
+// Dom elements for Activity Registration
+const paymentMethod 	= document.querySelector("#payment");	
 
 const punColors 	= ['cornflowerblue', 'darkslategrey', 'gold'],
 	  heartColors 	= ['tomato','steelblue','dimgrey'];
@@ -29,6 +32,8 @@ function init(){
 	otherJobField.style.display = "none";
 
 	addDefaultColorMessage();
+
+	hideAllPaymentMethods();
 }
 
 
@@ -255,6 +260,37 @@ registrationField.addEventListener("click", (e)=> {
 
 });
 
+paymentMethod.addEventListener('change', ()=> {
+	let method 	= paymentMethod.value;
+
+	hideAllPaymentMethods();
+	showPaymentMethod(method);
+
+	
+	if(method == "credit-card"){
+
+	}else if(method == "paypal"){
+
+	}else if(method == "bitcoin") {
+
+	}
+
+});
+
+function showPaymentMethod(method) {
+	document.querySelector("#"+method).style.display = 'block';
+}
+
+function hideAllPaymentMethods() {
+	let paymentMethods = [];
+	paymentMethods.push(document.querySelector('#credit-card'));
+	paymentMethods.push(document.querySelector('#paypal'));
+	paymentMethods.push(document.querySelector('#bitcoin'));
+	
+	paymentMethods.forEach((m)=> {
+		m.style.display = "none";
+	});
+}
 
 
 
