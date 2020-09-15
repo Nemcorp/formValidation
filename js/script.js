@@ -46,8 +46,10 @@ function init(){
 
 /*********************EVENT LISTENERS********************/
 
-form.addEventListener("submit", ()=>{
-	validateForm();
+form.addEventListener("submit", (e)=>{
+	if(validateForm()) {
+		e.preventDefault();
+	}
 });
 
 // listener for name validation
@@ -88,17 +90,16 @@ cvv.addEventListener("keyup", (e)=> {
 
 function validateEmail() {
 	let regex = /^[^@]+@[^@]+\.\w{3}$/;
-	validate(emailInput, regex);
+	return validate(emailInput, regex);
 }
 
 function validateName() {
 	let regex = /.+/;
-	validate(nameInput, regex);
+	return validate(nameInput, regex);
 }
 
 // listener for activity registration validation
 const registrationInput = document.querySelector('#name');
-
 function validateRegistration() {
 	let atLeastOneChecked = false;
 	events.forEach((e)=> {
@@ -112,34 +113,37 @@ function validateRegistration() {
 	}else {
 		registrationField.classList.remove('invalid');
 	}
+
+	return atLeastOneChecked;
 }
 
 function validatePayment() {
+	console.log('validating payment');
+	let validCC, validZip, validCvv;
 	if(paymentMethod.value === "credit-card" || paymentMethod.value === "select method"){
 
 		let ccRegex = /^\d{13,16}$/;
-		validate(ccNum, ccRegex);
+		validCC = validate(ccNum, ccRegex);
 
 		let zipRegex = /^\d{5}$/;
-		validate(zip, zipRegex);
+		validZip = validate(zip, zipRegex);
 
 		let cvvRegex = /^\d{3}$/;
-		validate(cvv, cvvRegex);
+		validCvv = validate(cvv, cvvRegex);
 	}
+
+	return (validCC && validZip && validCvv);
 
 }
 
-// nameInput.addEventListener("input", ()=> {
-// 	console.log("ad");
-// 	let regex = /.+/;
-// 	validate(nameInput, regex);
-// });
 
 function validate(input, regex) {
 	if(!regex.test(input.value)){
 		applyValidationError(input);
+		return false;
 	} else {
 		removeValidationError(input);
+		return true;
 	}
 }
 
@@ -153,7 +157,10 @@ function removeValidationError(input) {
 }
 
 function validateForm() {
-	//checkValidity();
+	var invalidForm = validateName() || validateEmail()
+					|| validateRegistration() || validatePayment(); 
+
+	return (!invalidForm);
 }
 
 
