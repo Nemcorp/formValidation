@@ -58,10 +58,15 @@ form.addEventListener("submit", (e)=>{
 			validRegistration = validateRegistration(),
 			validPayment = validatePayment();
 
+		console.log('valid name: ' + validName);
+		console.log('valid email: ' + validEmail);
+		console.log('valid registration: ' + validRegistration);
+		console.log('valid payment: ' + validPayment);
 		return (validName && validEmail && validRegistration && validPayment);
 	}
 
 });
+
 
 // listener for name validation
 const nameInput = document.querySelector('#name');
@@ -110,10 +115,10 @@ function validateEmail() {
 	let regex = /^[^@]+@[^@]+\.\w{3}$/;
 	if(validate(emailInput, regex)) {
 		removeValidationError(emailInput);
-		return false;
+		return true;
 	} else {
 		applyValidationError(emailInput, "Invalid Email");
-		return true;
+		return false;
 	}
 }
 
@@ -121,10 +126,10 @@ function validateName() {
 	let regex = /.+/;
 	if(validate(nameInput, regex)) {
 		removeValidationError(nameInput);
-		return false;
+		return true;
 	} else {
 		applyValidationError(nameInput, "Name Cannot Be Blank");
-		return true;
+		return false;
 	}
 }
 
@@ -140,7 +145,6 @@ function validateRegistration() {
 
 	if(!atLeastOneChecked){
 		applyValidationError(registrationField.querySelector("legend"), "Please Select At Least One");
-		//registrationField.classList.add('invalid');
 	}else {
 		removeValidationError(registrationField.querySelector("legend"));
 	}
@@ -154,8 +158,9 @@ function validatePayment() {
 			validZip = validateZip(),
 			validCvv = validateCvv();	
 		return (validCC && validZip && validCvv);
-	} else return true;
-
+	} else {
+		return true;
+	}
 
 	function validateCC() {
 		let ccRegex = /^\d{13,16}$/;
@@ -195,10 +200,8 @@ function validatePayment() {
 
 function validate(input, regex) {
 	if(!regex.test(input.value)){
-		// applyValidationError(input);
 		return false;
 	} else {
-		// removeValidationError(input);
 		return true;
 	}
 }
