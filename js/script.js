@@ -13,7 +13,10 @@ const registrationField = document.querySelector(".activities");
 const events = registrationField.querySelectorAll("label");
 
 // Dom elements for Activity Registration
-const paymentMethod 	= document.querySelector("#payment");	
+const paymentMethod 	= document.querySelector("#payment"),
+	  ccNum 			= document.querySelector("#cc-num"),
+	  zip 				= document.querySelector("#zip"),
+	  cvv 				= document.querySelector("#cvv");	
 
 const punColors 	= ['cornflowerblue', 'darkslategrey', 'gold'],
 	  heartColors 	= ['tomato','steelblue','dimgrey'];
@@ -61,6 +64,27 @@ emailInput.addEventListener("keyup", (e)=> {
 	}
 });
 
+// listener for cc validation
+ccNum.addEventListener("keyup", (e)=> {
+	if(e.key !== "Tab"){
+		validatePayment();
+	}
+});
+
+// listener for zip validation
+zip.addEventListener("keyup", (e)=> {
+	if(e.key !== "Tab"){
+		validatePayment();
+	}
+});
+
+// listener for cvv validation
+cvv.addEventListener("keyup", (e)=> {
+	if(e.key !== "Tab"){
+		validatePayment();
+	}
+});
+
 
 function validateEmail() {
 	let regex = /^[^@]+@[^@]+\.\w{3}$/;
@@ -88,6 +112,21 @@ function validateRegistration() {
 	}else {
 		registrationField.classList.remove('invalid');
 	}
+}
+
+function validatePayment() {
+	if(paymentMethod.value === "credit-card" || paymentMethod.value === "select method"){
+
+		let ccRegex = /^\d{13,16}$/;
+		validate(ccNum, ccRegex);
+
+		let zipRegex = /^\d{5}$/;
+		validate(zip, zipRegex);
+
+		let cvvRegex = /^\d{3}$/;
+		validate(cvv, cvvRegex);
+	}
+
 }
 
 // nameInput.addEventListener("input", ()=> {
