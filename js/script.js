@@ -47,9 +47,20 @@ function init(){
 /*********************EVENT LISTENERS********************/
 
 form.addEventListener("submit", (e)=>{
-	if(validateForm()) {
+	if(!validateForm()) {
 		e.preventDefault();
 	}
+
+
+	function validateForm() {
+		let validName = validateName(),
+			validEmail = validateEmail(),
+			validRegistration = validateRegistration(),
+			validPayment = validatePayment();
+
+		return (validName && validEmail && validRegistration && validPayment);
+	}
+
 });
 
 // listener for name validation
@@ -63,6 +74,13 @@ const emailInput = document.querySelector('#mail');
 emailInput.addEventListener("keyup", (e)=> {
 	if(e.key !== "Tab"){
 		validateEmail();
+	}
+});
+
+// listener for registration checkboxes
+registrationField.addEventListener("click", (e)=> {
+	if(e.target.checked){
+		removeValidationError(registrationField.querySelector("legend"));
 	}
 });
 
@@ -109,9 +127,10 @@ function validateRegistration() {
 	});
 
 	if(!atLeastOneChecked){
-		registrationField.classList.add('invalid');
+		applyValidationError(registrationField.querySelector("legend"));
+		//registrationField.classList.add('invalid');
 	}else {
-		registrationField.classList.remove('invalid');
+		removeValidationError(registrationField.querySelector("legend"));
 	}
 
 	return atLeastOneChecked;
@@ -147,21 +166,28 @@ function validate(input, regex) {
 	}
 }
 
-function applyValidationError(input) {
+function applyValidationError(input, errorMessage="INVALID INPUT") {
 	input.classList.add("invalid");
-	// addValidationMessage(errorMessage);
+	addErrorMessage(errorMessage);
+
+
+	function addErrorMessage(errorMessage) {
+		if(!document.querySelector(`#${input.id}Error`)){
+			let error = `<span class="errorMessage" id="${input.id}Error">${errorMessage}</span>`
+			input.insertAdjacentHTML('beforebegin', error);
+		}
+	}
 }
 
 function removeValidationError(input) {
 	input.classList.remove("invalid");
+	if(document.querySelector(`#${input.id}Error`)){
+		document.querySelector(`#${input.id}Error`).remove();
+	}
 }
 
-function validateForm() {
-	var invalidForm = validateName() || validateEmail()
-					|| validateRegistration() || validatePayment(); 
 
-	return (!invalidForm);
-}
+
 
 
 jobRoleSelect.addEventListener("change", (e)=> {
