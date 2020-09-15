@@ -108,12 +108,24 @@ cvv.addEventListener("keyup", (e)=> {
 
 function validateEmail() {
 	let regex = /^[^@]+@[^@]+\.\w{3}$/;
-	return validate(emailInput, regex);
+	if(validate(emailInput, regex)) {
+		removeValidationError(emailInput);
+		return false;
+	} else {
+		applyValidationError(emailInput, "Invalid Email");
+		return true;
+	}
 }
 
 function validateName() {
 	let regex = /.+/;
-	return validate(nameInput, regex);
+	if(validate(nameInput, regex)) {
+		removeValidationError(nameInput);
+		return false;
+	} else {
+		applyValidationError(nameInput, "Name Cannot Be Blank");
+		return true;
+	}
 }
 
 // listener for activity registration validation
@@ -127,7 +139,7 @@ function validateRegistration() {
 	});
 
 	if(!atLeastOneChecked){
-		applyValidationError(registrationField.querySelector("legend"));
+		applyValidationError(registrationField.querySelector("legend"), "Please Select At Least One");
 		//registrationField.classList.add('invalid');
 	}else {
 		removeValidationError(registrationField.querySelector("legend"));
@@ -137,31 +149,56 @@ function validateRegistration() {
 }
 
 function validatePayment() {
-	console.log('validating payment');
-	let validCC, validZip, validCvv;
 	if(paymentMethod.value === "credit-card" || paymentMethod.value === "select method"){
+		let validCC  = validateCC(),
+			validZip = validateZip(),
+			validCvv = validateCvv();	
+		return (validCC && validZip && validCvv);
+	} else return true;
 
+
+	function validateCC() {
 		let ccRegex = /^\d{13,16}$/;
-		validCC = validate(ccNum, ccRegex);
-
-		let zipRegex = /^\d{5}$/;
-		validZip = validate(zip, zipRegex);
-
-		let cvvRegex = /^\d{3}$/;
-		validCvv = validate(cvv, cvvRegex);
+		if(validate(ccNum, ccRegex)){
+			removeValidationError(ccNum);
+			return true;
+		}else {
+			applyValidationError(ccNum, "valid credit card, no spaces");
+			return false;
+		}
 	}
 
-	return (validCC && validZip && validCvv);
+	function validateZip() {
+		let zipRegex = /^\d{5}$/;
+		if(validate(zip, zipRegex)){
+			removeValidationError(zip);
+			return true;
+		}else {
+			applyValidationError(zip, "5 digits please");
+			return false;
+		}
+	}
+
+	function validateCvv() {
+		let cvvRegex = /^\d{3}$/;
+		if(validate(cvv, cvvRegex)){
+			removeValidationError(cvv);
+			return true;
+		}else {
+			applyValidationError(cvv, "3 digits please");
+			return false;
+		}
+	}
 
 }
 
 
 function validate(input, regex) {
 	if(!regex.test(input.value)){
-		applyValidationError(input);
+		// applyValidationError(input);
 		return false;
 	} else {
-		removeValidationError(input);
+		// removeValidationError(input);
 		return true;
 	}
 }
