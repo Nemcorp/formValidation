@@ -10,13 +10,13 @@ const jobRoleSelect 	= document.querySelector("#title"),
 
 // Dom elements for Activity Registration
 const registrationField = document.querySelector(".activities");
+const events = registrationField.querySelectorAll("label");
 
 // Dom elements for Activity Registration
 const paymentMethod 	= document.querySelector("#payment");	
 
 const punColors 	= ['cornflowerblue', 'darkslategrey', 'gold'],
 	  heartColors 	= ['tomato','steelblue','dimgrey'];
-
 
 
 init();
@@ -47,18 +47,66 @@ form.addEventListener("submit", ()=>{
 	validateForm();
 });
 
+// listener for name validation
 const nameInput = document.querySelector('#name');
 nameInput.addEventListener("input", ()=> {
-	let regex = /.+/;
-	if(!regex.test(nameInput.value)){
-		applyValidationError(nameInput);
-	} else {
-		removeValidationError(nameInput);
+	validateName();
+});
+
+// listener for email validation
+const emailInput = document.querySelector('#mail');
+emailInput.addEventListener("keyup", (e)=> {
+	if(e.key !== "Tab"){
+		validateEmail();
 	}
 });
 
+
+function validateEmail() {
+	let regex = /^[^@]+@[^@]+\.\w{3}$/;
+	validate(emailInput, regex);
+}
+
+function validateName() {
+	let regex = /.+/;
+	validate(nameInput, regex);
+}
+
+// listener for activity registration validation
+const registrationInput = document.querySelector('#name');
+
+function validateRegistration() {
+	let atLeastOneChecked = false;
+	events.forEach((e)=> {
+		if(e.firstElementChild.checked){
+			atLeastOneChecked = true;
+		}
+	});
+
+	if(!atLeastOneChecked){
+		registrationField.classList.add('invalid');
+	}else {
+		registrationField.classList.remove('invalid');
+	}
+}
+
+// nameInput.addEventListener("input", ()=> {
+// 	console.log("ad");
+// 	let regex = /.+/;
+// 	validate(nameInput, regex);
+// });
+
+function validate(input, regex) {
+	if(!regex.test(input.value)){
+		applyValidationError(input);
+	} else {
+		removeValidationError(input);
+	}
+}
+
 function applyValidationError(input) {
 	input.classList.add("invalid");
+	// addValidationMessage(errorMessage);
 }
 
 function removeValidationError(input) {
@@ -153,7 +201,6 @@ function updateOptionsToFitTheme(colors) {
 
 registrationField.addEventListener("click", (e)=> {
 	// for each event, check if there is a day conflict
-	let events = registrationField.querySelectorAll("label");
 	// Start at one because the first element, main conference, does not have a date and time
 	if(e.target.name !== "all"){
 		for(let i = 1; i < events.length; i++){
@@ -282,10 +329,10 @@ registrationField.addEventListener("click", (e)=> {
 	function handleCheckboxDisabling(event) {
 		let eventCheckbox = event.firstElementChild;
 		if(e.target.checked){
-			event.style.color = "grey";
+			event.classList.add("conflictingEvent");
 			eventCheckbox.disabled = true;
 		}else {
-			event.style.color = "black";
+			event.classList.remove("conflictingEvent");
 			eventCheckbox.disabled = false;
 		}
 	}

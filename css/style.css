@@ -128,7 +128,12 @@ option {
 }
 
 .invalid {
-	border: 2px solid red;
+	border: 2px solid red !important;
+}
+
+.conflictingEvent {
+	color: red;
+	opacity: .6;
 }
 
 /* ================================= 
