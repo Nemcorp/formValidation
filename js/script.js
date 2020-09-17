@@ -46,6 +46,12 @@ function init(){
 	disableDefaultPaymentSelectMessage();
 
 	hideColorSelectDiv();
+
+	setDefaultPaymentOption();
+}
+
+function setDefaultPaymentOption() {
+	paymentMethod.children.item(1).selected = "selected";
 }
 
 
