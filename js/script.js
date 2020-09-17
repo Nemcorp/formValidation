@@ -195,11 +195,19 @@ function validatePayment() {
 	*/
 	function validateCC() {
 		let ccRegex = /^\d{13,16}$/;
+		
+		let customErrorMessage = "enter a valid credit card num, no spaces";
+		if(ccNum.value.length <13) {
+			customErrorMessage = "CC number must contain at least 13 digits";
+		}else if (ccNum.value.length >16){
+			customErrorMessage = "CC number cannot contain more than 16 digits";
+		}
+
 		if(validate(ccNum, ccRegex)){
 			removeValidationError(ccNum);
 			return true;
 		}else {
-			applyValidationError(ccNum, "valid credit card, no spaces");
+			applyValidationError(ccNum, customErrorMessage);
 			return false;
 		}
 	}
