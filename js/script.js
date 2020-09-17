@@ -6,7 +6,8 @@ const otherJobField 	= document.querySelector("#other-title");
 // Dom elements for T-Shirt Info
 const jobRoleSelect 	= document.querySelector("#title"),
 	  themeSelect 		= document.querySelector("#design"),
-	  colorSelect 		= document.querySelector("#color");
+	  colorSelect 		= document.querySelector("#color"),
+	  colorSelectDiv    = document.querySelector("#shirt-colors");
 
 // Dom elements for Activity Registration
 const registrationField = document.querySelector(".activities");
@@ -43,10 +44,10 @@ function init(){
 	hideAllPaymentMethods();
 	showPaymentMethod("credit-card");
 	disableDefaultPaymentSelectMessage();
+
+	hideColorSelectDiv();
 }
 
-
-/*********************EVENT LISTENERS********************/
 
 /**
 * Validate the form on submittal. Prevents submittal if there is not a valid
@@ -306,8 +307,10 @@ jobRoleSelect.addEventListener("change", (e)=> {
 });
 
 // event listener to toggle which color options are available based on which color theme is selected from the dropdown.
+// EXTRA CREDIT. If the Color input and label are hidden, unhide them.
 themeSelect.addEventListener("change", (e)=> {
 	toggleColorFieldText();
+	unhideColorSelectDiv();
 
 	function toggleColorFieldText() {
 		if(e.target.value === "Select Theme") {
@@ -321,6 +324,20 @@ themeSelect.addEventListener("change", (e)=> {
 		}
 	}
 });
+
+
+/**
+* Does what is says
+*/
+function hideColorSelectDiv() {
+	colorSelectDiv.style.display = "none";
+}
+/**
+* Does what is says
+*/
+function unhideColorSelectDiv() {
+	colorSelectDiv.style.display = "block";
+}
 
 /**
 * Creates a default message for the t-shirt color select dropdown. Hides
