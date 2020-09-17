@@ -18,6 +18,7 @@ const paymentMethod 	= document.querySelector("#payment"),
 	  zip 				= document.querySelector("#zip"),
 	  cvv 				= document.querySelector("#cvv");	
 
+// arrays containing data for which colors are available for which color category
 const punColors 	= ['cornflowerblue', 'darkslategrey', 'gold'],
 	  heartColors 	= ['tomato','steelblue','dimgrey'];
 
@@ -25,8 +26,8 @@ const punColors 	= ['cornflowerblue', 'darkslategrey', 'gold'],
 init();
 
 /**
-* Called on page load.
-*
+* Called on page load. Focuses on first text input, hides 'otherJobField', 
+* adds a default color message, and sets default payment method
 */
 function init(){
 	// Focus on first text input on page
@@ -35,6 +36,7 @@ function init(){
 	// hide 'other' job role field. It should only be revealed if
 	// a user selects 'other' from the job role dropdown
 	otherJobField.style.display = "none";
+
 
 	addDefaultColorMessage();
 
@@ -46,22 +48,27 @@ function init(){
 
 /*********************EVENT LISTENERS********************/
 
+/**
+* Validate the form on submittal. Prevents submittal if there is not a valid
+* name, email, selected event, and payment information
+*/
 form.addEventListener("submit", (e)=>{
 	if(!validateForm()) {
 		e.preventDefault();
 	}
 
-
+	/**
+	* Calls all validation functions. If any of them fail, false is returned
+	* and the form should be prevented from submitting.
+	*
+	* @return {boolean} false if any validations fail, else true
+	*/
 	function validateForm() {
 		let validName = validateName(),
 			validEmail = validateEmail(),
 			validRegistration = validateRegistration(),
 			validPayment = validatePayment();
 
-		console.log('valid name: ' + validName);
-		console.log('valid email: ' + validEmail);
-		console.log('valid registration: ' + validRegistration);
-		console.log('valid payment: ' + validPayment);
 		return (validName && validEmail && validRegistration && validPayment);
 	}
 
@@ -110,7 +117,11 @@ cvv.addEventListener("keyup", (e)=> {
 	}
 });
 
-
+/**
+* Validates whether email contained in the emailInput is in a valid format
+*
+* @return {boolean} true if email is valid, else false
+*/
 function validateEmail() {
 	let regex = /^[^@]+@[^@]+\.\w{3}$/;
 	if(validate(emailInput, regex)) {
@@ -122,6 +133,11 @@ function validateEmail() {
 	}
 }
 
+/**
+* Validates whether name is valid (ie. it cannot be blank)
+*
+* @return {boolean} true if name is not blank, else false
+*/
 function validateName() {
 	let regex = /.+/;
 	if(validate(nameInput, regex)) {
@@ -152,6 +168,15 @@ function validateRegistration() {
 	return atLeastOneChecked;
 }
 
+
+/**
+* Validates whether payment information is valid. If payment method is paypal or bitcoin,
+* no validation is necessary. If 'credit-card' or 'select method' (the default), then we
+* must validated the cc Number, the zip, and the cvv.
+*
+* @return {boolean} true payment method is 'paypal' or 'bitcoin'. False if payment method is
+*				    'credit-card' or 'select method' and the cc number, zip, or cvv are invalid
+*/
 function validatePayment() {
 	if(paymentMethod.value === "credit-card" || paymentMethod.value === "select method"){
 		let validCC  = validateCC(),
@@ -162,6 +187,11 @@ function validatePayment() {
 		return true;
 	}
 
+	/**
+	* Validates whether cc number is valid. It must be a string of between 13-16 (inclusive) digits
+	*
+	* @return {boolean} true if ccNum is >=13 digits and <=16 digits, else false
+	*/
 	function validateCC() {
 		let ccRegex = /^\d{13,16}$/;
 		if(validate(ccNum, ccRegex)){
@@ -173,6 +203,11 @@ function validatePayment() {
 		}
 	}
 
+	/**
+	* Validates whether zip is valid. Must be a string of 5 digits
+	*
+	* @return {boolean} true if zip is a string of 5 digits, else false
+	*/
 	function validateZip() {
 		let zipRegex = /^\d{5}$/;
 		if(validate(zip, zipRegex)){
@@ -184,6 +219,11 @@ function validatePayment() {
 		}
 	}
 
+	/**
+	* Validates whether cvv is valid. Must be a string of 3 digits
+	*
+	* @return {boolean} true if cvv is a string of 3 digits, else false
+	*/
 	function validateCvv() {
 		let cvvRegex = /^\d{3}$/;
 		if(validate(cvv, cvvRegex)){
@@ -197,7 +237,15 @@ function validatePayment() {
 
 }
 
-
+/**
+* Given any input, this function will compare it to the given regex pattern. It 
+* will return true if the pattern matches.
+*
+* @param {<input>} input   A dom element containing a string to be matched against regex
+* @param {regular expression} regex   The pattern to be matched with input
+*
+* @return {boolean} true input matches the given regex pattern, else false
+*/
 function validate(input, regex) {
 	if(!regex.test(input.value)){
 		return false;
@@ -206,8 +254,17 @@ function validate(input, regex) {
 	}
 }
 
+/**
+* Applies an error message directly before a given dom element, denoted by input. If no custom
+* error message is provided, the error message will be "INVALID INPUT"
+*
+* @param {<input>} input    The dom element before which we wish to place the error message
+* @ @param {string} errorMessage   The text of the message that will display
+*/
 function applyValidationError(input, errorMessage="INVALID INPUT") {
+	// add styling
 	input.classList.add("invalid");
+	// add dom element
 	addErrorMessage(errorMessage);
 
 
@@ -219,6 +276,12 @@ function applyValidationError(input, errorMessage="INVALID INPUT") {
 	}
 }
 
+/**
+* Removes an error message. This will be called when a user types a correctly formatted input
+* into the corresponding field.
+*
+* @param {<input>} input    The dom element whose error message we wish to delete.
+*/
 function removeValidationError(input) {
 	input.classList.remove("invalid");
 	if(document.querySelector(`#${input.id}Error`)){
@@ -229,7 +292,7 @@ function removeValidationError(input) {
 
 
 
-
+// event listener to toggle the display of the 'otherjobfield' when 'other' is selected from the dropdown
 jobRoleSelect.addEventListener("change", (e)=> {
 	toggleOtherJobField();
 
@@ -242,6 +305,7 @@ jobRoleSelect.addEventListener("change", (e)=> {
 	}
 });
 
+// event listener to toggle which color options are available based on which color theme is selected from the dropdown.
 themeSelect.addEventListener("change", (e)=> {
 	toggleColorFieldText();
 
@@ -259,11 +323,12 @@ themeSelect.addEventListener("change", (e)=> {
 });
 
 /**
-* 
+* Creates a default message for the t-shirt color select dropdown. Hides
+* all other options.
 */
 function addDefaultColorMessage() {
 	// this hides all other options
-	updateOptionsToFitTheme([]);
+	updateOptionsToFitTheme();
 	
 	let defaultMessage = `<option id="defaultMessage">Please Select a T-Shirt Theme</option>`
 	colorSelect.insertAdjacentHTML('afterbegin', defaultMessage);
@@ -279,15 +344,24 @@ function removeDefaultColorMessage(){
 }
 
 /**
-* 
+* Hides all colors, and then unhides those that should be displayed based on the 
+* current chosen theme. The colors to unhide are passed in as an array.
+*
+* @param {array} colors   An array of colors which will be displayed in the dropdown. All
+* others will be hidden and unselectable. If no argument is passed to the function, then
+* all options will be hidden.
 */
-function updateOptionsToFitTheme(colors) {
+function updateOptionsToFitTheme(colors = []) {
 	hideAllColors();
 	unhideChosenColors();
 
-
+	/**
+	* Hides and disables all colors in the color option dropdown. 
+	*/
 	function hideAllColors() {
+		// combine pun colors and heart colors to get a complete list
 		let allColors = punColors.concat(heartColors);
+		// loop through all colors, hiding and disabling each one
 		allColors.forEach(color => {
 			let colorOptionElement = document.querySelector(`option[value=${color}]`);
 			colorOptionElement.style.display = 'none';
@@ -295,7 +369,11 @@ function updateOptionsToFitTheme(colors) {
 		});
 	}
 
+	/**
+	* Unhides and enables all colors in the color option dropdown. 
+	*/
 	function unhideChosenColors(){
+		// loop through chosen colors; enable and display each one
 		colors.forEach((color,i) => {
 			let colorOptionElement = document.querySelector(`option[value=${color}]`);
 			colorOptionElement.style.display = 'block';
@@ -310,11 +388,15 @@ function updateOptionsToFitTheme(colors) {
 }
 
 
-
+/**
+* Click listener for event registration checkboxes. When one is selected, the listener checks to see
+* if there is an even conflict. If there is, it disables and styles the conflicting event(s). Then the
+* total cost of the selected events is calculated and displayed 
+*/
 registrationField.addEventListener("click", (e)=> {
-	// for each event, check if there is a day conflict
-	// Start at one because the first element, main conference, does not have a date and time
+	// for each event that is NOT the main event ('all'), check if there is a day conflict
 	if(e.target.name !== "all"){
+		// Note( i=1 and not 1=0 because the first element does not have a date and time
 		for(let i = 1; i < events.length; i++){
 			if(eventConflict(e.target, events[i].firstElementChild) ){
 				handleCheckboxDisabling(events[i]);
@@ -325,12 +407,14 @@ registrationField.addEventListener("click", (e)=> {
 	updateTotalCost();
 
 	/**
-	* 
+	* Calculates total cost of all selected events and displays result to the dom
 	*/
 	function updateTotalCost() {
+		// If there is not already an element to hold the total cost, create one.
 		if(!totalCostWrapperExists()){
 			addTotalCostWrapper();
 		}
+
 
 		let totalCostElement = document.querySelector("#totalCost");
 		let totalCost = calculateNewTotalCost();
@@ -344,6 +428,11 @@ registrationField.addEventListener("click", (e)=> {
 			return document.querySelector('#totalCostWrapper');
 		}
 
+		/**
+		* Creates a dom element to display the total cost. Add it at the end of the 
+		* event registration field. A wrapper is used to make it easy to update the 
+		* totalCost variable without having to replace the entire dom element
+		*/
 		function addTotalCostWrapper() {
 			let totalCostWrapper = 
 				`<span id="totalCostWrapper"> Total Cost: $
@@ -352,12 +441,27 @@ registrationField.addEventListener("click", (e)=> {
 			registrationField.insertAdjacentHTML('beforeend', totalCostWrapper);
 		}
 
+		/**
+		* Remove the total cost dom element. This is used when the total cost drops
+		* to 0.
+		*/
 		function removeTotalCostWrapper() {
 			document.querySelector('#totalCostWrapper').remove();
 		}
 
+
+		/**
+		* Adds or subtracts the cost of a newly selected event to the total already contained in the 
+		* totalCostElement. The result will be the total of all costs for selected events. 
+		*
+		* @return {int} The total integer cost of all events selected by the user.
+		*               
+		* Developer note: If the total returned is <=0, the total cost element should be deleted
+		*/
 		function calculateNewTotalCost() {
+			// Find out what the cost total is already
 			let previousCost = parseInt(totalCostElement.innerHTML, 10);
+			// Find out how much the newly selected even costs.
 			let costToAdd = parseInt(e.target.getAttribute('data-cost'), 10);
 			
 			// If the box is being unchecked, subtract cost instead of adding it
@@ -372,16 +476,25 @@ registrationField.addEventListener("click", (e)=> {
 
 
 	/**
-	* 
+	* Given two events with a data-day-and-time attribute, determine whether there is a
+	* conflict between them.
+	*
+	* @param {input:type=checkbox} event1   The first event containing a data-day-and-time attribute.
+	* @param {input:type=checkbox} event2   The second event containing a data-day-and-time attribute.
+	*	
+	* @return {boolean}  True if there is a conflict between event1 and event2; false otherwise.
 	*/
 	function eventConflict(event1, event2) {
 		let dayAndTime1 = event1.getAttribute('data-day-and-time'); 
 		let dayAndTime2 = event2.getAttribute('data-day-and-time'); 
-
 		return (dayConflict() && timeConflict() && event1 !== event2);
 
+
+
 		/**
-		* 
+		* Determines if two events, defined above, occur on the same day. 
+		*
+		* @return {boolean} True if conflict between days, else false
 		*/
 		function dayConflict() {
 			let day2 = parseDay(dayAndTime2);
@@ -390,7 +503,10 @@ registrationField.addEventListener("click", (e)=> {
 		}
 
 		/**
-		* 
+		* Determines if two events, defined above, occur simultaneously. Any 
+		* overlap in start or end time counts as simultaneous.
+		*
+		* @return {boolean} True if there is a time conflict, else false
 		*/
 		function timeConflict(){
 			let startTime1 = parseStartTime(dayAndTime1),
@@ -398,20 +514,32 @@ registrationField.addEventListener("click", (e)=> {
 			let startTime2 = parseStartTime(dayAndTime2),
 				endTime2 = parseEndTime(dayAndTime2);	
 
+			// return false if event 1 starts during event 2 OR
+			//        if event 1 ends during event 2
 			return (startTime1 >= startTime2 && startTime1 <= endTime2) ||
 				(endTime1 >= startTime2 && endTime1 <= endTime2);
 		}
 
 
 		/**
-		* 
+		* Finds and returns the day of an event given a dayAndTime string with the
+		* format :"Tuesday 1pm-4pm"
+		*
+		* @param {string} dayAndTime    The string containing the day we wish to extract
+		*
+		* @return {string}  A string representation of the day contained in dayAndTime
 		*/
 		function parseDay(dayAndTime) {
 			return dayAndTime.match(/^\w+/i)[0];
 		}
 
 		/**
-		* 
+		* Finds and returns the starting time of an event given a dayAndTime string with the
+		* format :"Tuesday 1pm-4pm"
+		*
+		* @param {string} dayAndTime    The string containing the time we wish to extract
+		*
+		* @return {string}  A string representation of the start time contained in dayAndTime
 		*/
 		function parseStartTime(dayAndTime) {
 			let timeString = dayAndTime.match(/ \d+[ap]m+/i)[0];
@@ -423,7 +551,12 @@ registrationField.addEventListener("click", (e)=> {
 		}
 
 		/**
-		* 
+		* Finds and returns the ending time of an event given a dayAndTime string with the
+		* format :"Tuesday 1pm-4pm"
+		*
+		* @param {string} dayAndTime    The string containing the time we wish to extract
+		*
+		* @return {string}  A string representation of the end time contained in dayAndTime
 		*/
 		function parseEndTime(dayAndTime) {
 			let timeString = dayAndTime.match(/\-\d+[ap]m+/i)[0];
@@ -436,7 +569,11 @@ registrationField.addEventListener("click", (e)=> {
 	}
 
 	/**
-	* 
+	* Disables or re-enables any checkboxes that represent events that conflict with 'event'.
+	* Also handles styling.
+	*
+	* @param {<label>} event  The outer dom element containing the event we wish to disable or
+	* re-enable
 	*/
 	function handleCheckboxDisabling(event) {
 		let eventCheckbox = event.firstElementChild;
@@ -451,6 +588,8 @@ registrationField.addEventListener("click", (e)=> {
 
 });
 
+// Event listener to toggle visibility so that only the fields for the selected
+// payment method are shown.
 paymentMethod.addEventListener('change', ()=> {
 	let method 	= paymentMethod.value;
 
@@ -458,11 +597,19 @@ paymentMethod.addEventListener('change', ()=> {
 	showPaymentMethod(method);
 });
 
-
+/**
+* Unhides the dom element with a given payment method.
+*
+* @param {string} method   A string representation of the method we wish to display
+*/
 function showPaymentMethod(method) {
 	document.querySelector("#"+method).style.display = 'block';
 }
 
+/**
+* Hides all payment method fields. This is called as a sort of 'clear' before we
+* unhide for the payment method we have selected.
+*/
 function hideAllPaymentMethods() {
 	let paymentMethods = [];
 	paymentMethods.push(document.querySelector('#credit-card'));
@@ -474,6 +621,9 @@ function hideAllPaymentMethods() {
 	});
 }
 
+/**
+* Does just what the function name says.
+*/
 function disableDefaultPaymentSelectMessage() {
 	paymentMethod.querySelector("option").disabled = true;
 }
