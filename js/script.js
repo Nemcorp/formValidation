@@ -324,17 +324,19 @@ jobRoleSelect.addEventListener("change", (e)=> {
 // EXTRA CREDIT. If the Color input and label are hidden, unhide them.
 themeSelect.addEventListener("change", (e)=> {
 	toggleColorFieldText();
-	unhideColorSelectDiv();
 
 	function toggleColorFieldText() {
 		if(e.target.value === "Select Theme") {
 			addDefaultColorMessage();
+			hideColorSelectDiv();
 		}else if(e.target.value === "js puns") {
 			removeDefaultColorMessage();
 			updateOptionsToFitTheme(punColors);
+			unhideColorSelectDiv();
 		}else if(e.target.value === "heart js") {
 			removeDefaultColorMessage();
 			updateOptionsToFitTheme(heartColors);
+			unhideColorSelectDiv();
 		}
 	}
 });
@@ -518,7 +520,9 @@ registrationField.addEventListener("click", (e)=> {
 	function eventConflict(event1, event2) {
 		let dayAndTime1 = event1.getAttribute('data-day-and-time'); 
 		let dayAndTime2 = event2.getAttribute('data-day-and-time'); 
-		return (dayConflict() && timeConflict() && event1 !== event2);
+		if(dayAndTime1 && dayAndTime2) {
+			return (dayConflict() && timeConflict() && event1 !== event2);
+		}
 
 
 
